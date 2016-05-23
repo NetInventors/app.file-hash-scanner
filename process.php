@@ -9,20 +9,22 @@ require_once './Classes/FileHashScanner.php';
 $scanner = new FileHashScanner;
 $log = $scanner->doScan('/var/www', array(/* excludes  */));
 
-$configuration = include './Configurations/Mailer.php';
+if (false !== $log) {
+    $configuration = include './Configurations/Mailer.php';
 
-$transport = Swift_SmtpTransport::newInstance($configuration['hostname'], $configuration['port'])
-    ->setUsername($configuration['username'])
-    ->setPassword($configuration['password']);
+    $transport = Swift_SmtpTransport::newInstance($configuration['hostname'], $configuration['port'])
+        ->setUsername($configuration['username'])
+        ->setPassword($configuration['password']);
 
-$mailer = Swift_Mailer::newInstance($transport);
+    $mailer = Swift_Mailer::newInstance($transport);
 
-$message = Swift_Message::newInstance('Scan results')
-    ->setFrom(array('no-reply@netinventors.de' => 'File Hash Scanner'))
-    ->setTo(array('server@netinventors.de' => 'Net Inventors Server'))
-    ->setBody('Logfiles attached.')
-    ->attach(Swift_Attachment::fromPath($log));
+    $message = Swift_Message::newInstance('Scan results')
+        ->setFrom(array('no-reply@netinventors.de' => 'File Hash Scanner'))
+        ->setTo(array('server@netinventors.de' => 'Net Inventors Server'))
+        ->setBody('Logfiles attached.')
+        ->attach(Swift_Attachment::fromPath($log));
 
-$result = $mailer->send($message);
+    $result = $mailer->send($message);
+}
 
 ?>

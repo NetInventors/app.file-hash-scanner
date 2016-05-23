@@ -2,7 +2,7 @@
 
 /**
  * Class: FileHashScanner
- * Version: 1.0.0
+ * Version: 1.0.1
  */
 
 class FileHashScanner
@@ -221,6 +221,10 @@ class FileHashScanner
         $logfile = $this->_logfile;
         $pathToLogfile = rtrim($initLogsDirectory, '/') . '/' . $logfile;
         unset($initLogsDirectory);
+
+        if (0 === count($this->_newFiles) + count($this->_changedFiles) + count($this->_deletedFiles)) {
+            return false;
+        }
 
         if (1 < $this->_procCounter) {
             file_put_contents($pathToLogfile, chr(10) . '--------' . chr(10) . chr(10), FILE_APPEND);
